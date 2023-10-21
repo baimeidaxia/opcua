@@ -7,8 +7,6 @@ use std::{
     io::Write,
     sync::atomic::{AtomicBool, Ordering},
 };
-use chrono::TimeZone;
-use chrono_tz::Tz;
 
 use chrono::TimeZone;
 use chrono_tz::Tz;
