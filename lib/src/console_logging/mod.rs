@@ -7,6 +7,8 @@ use std::{
     io::Write,
     sync::atomic::{AtomicBool, Ordering},
 };
+use chrono::TimeZone;
+use chrono_tz::Tz;
 
 use env_logger::{fmt::Color, Builder};
 
@@ -22,6 +24,14 @@ impl<T: fmt::Display> fmt::Display for Pad<T> {
 }
 
 pub fn init() {
+    init_inner(Tz::UTC);
+}
+
+pub fn init_with_tz(tz: Tz) {
+    init_inner(tz);
+}
+
+pub fn init_inner(tz: Tz) {
     lazy_static! {
         static ref INITIALISED: AtomicBool = AtomicBool::new(false);
     }
@@ -34,7 +44,8 @@ pub fn init() {
         let mut builder = Builder::from_env("RUST_OPCUA_LOG");
         builder.format(|f, record| {
             let now = chrono::Utc::now();
-            let time_fmt = now.format("%Y-%m-%d %H:%M:%S%.3f");
+            let now_tz = tz.from_utc_datetime(&now.naive_utc());
+            let time_fmt = now_tz.format("%Y-%m-%d %H:%M:%S%.3f");
 
             let mut style = f.style();
             match record.metadata().level() {
