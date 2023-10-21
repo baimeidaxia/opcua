@@ -10,7 +10,9 @@ use std::{
 use chrono::TimeZone;
 use chrono_tz::Tz;
 
-use env_logger::{fmt::Color, Builder};
+use chrono::TimeZone;
+use chrono_tz::Tz;
+use env_logger::{Builder, fmt::Color};
 
 struct Pad<T> {
     value: T,
@@ -42,7 +44,7 @@ pub fn init_inner(tz: Tz) {
         // env_logger/RUST_LOG is used by cargo and other rust tools so console fills with garbage from
         // other processes  when we're only interested in our own garbage!
         let mut builder = Builder::from_env("RUST_OPCUA_LOG");
-        builder.format(|f, record| {
+        builder.format(move |f, record| {
             let now = chrono::Utc::now();
             let now_tz = tz.from_utc_datetime(&now.naive_utc());
             let time_fmt = now_tz.format("%Y-%m-%d %H:%M:%S%.3f");
